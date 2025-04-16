@@ -15,6 +15,41 @@ Install via `dart pub add`:
 ```sh
 dart pub add simple_tracer
 ```
+---
+
+## Usage
+
+The SimpleTracer class in your code is designed to send trace data to a server (specifically Honeycomb in this case). Internaly it uses the Dio package for HTTP requests to send protobuf opentelemetry data to the configured server.
+
+To avoid using context, DI or service locators SimpleTracker follows a singleton pattern to ensure only one instance of the tracer is configured and used throughout the application.
+
+
+```dart
+import 'package:simple_tracer/simple_tracer.dart';
+import 'package:simple_tracer/trace_model.dart';
+
+void main() async {
+  // Step 1: Configure the tracer
+  SimpleTracer.configureHoneycomb(apiKey: 'your-honeycomb-api-key');
+
+  // Step 2: Create a Trace object
+  final trace = Trace(
+    // Populate the trace object with necessary data
+    ...
+  );
+  await _doSomething();
+  // end trace when done
+  trace.end();
+
+  // Step 3: Send the trace to the server
+  try {
+    await SimpleTracer.sendTrace(trace);
+    print('Trace sent successfully!');
+  } catch (e) {
+    print('Failed to send trace: $e');
+  }
+}
+```
 
 ---
 

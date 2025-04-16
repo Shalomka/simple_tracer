@@ -6,7 +6,7 @@ void main() {
   group('SimpleTracer', () {
     test('can be instantiated', () {
       expect(
-          SimpleTracer.honeycomb(
+          SimpleTracer.configureHoneycomb(
             apiKey: 'test_api_key',
           ),
           isA<SimpleTracer>());

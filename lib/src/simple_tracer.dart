@@ -8,24 +8,58 @@ class SimpleTracer {
   final Dio _dio;
   final String _endpoint;
   final String _apiKey;
-  const SimpleTracer._(
-    this._dio,
-    this._endpoint,
-    this._apiKey,
-  );
 
-  /// Creates a new instance of [SimpleTracer] for
-  /// honeycomb.io
-  SimpleTracer.honeycomb({
+  static SimpleTracer? _instance;
+
+  SimpleTracer._internal(this._dio, this._endpoint, this._apiKey);
+
+  ///
+  /// Constructors
+  ///
+
+  /// Configures and returns the singleton instance of [SimpleTracer]
+  factory SimpleTracer.configureHoneycomb({
     required String apiKey,
-  }) : this._(
-          Dio(),
-          'https://api.honeycomb.io',
-          apiKey,
-        );
+  }) {
+    return _instance ??= SimpleTracer._internal(
+      Dio(),
+      'https://api.honeycomb.io',
+      apiKey,
+    );
+  }
+
+  ///
+  /// Getters
+  ///
+
+  /// Returns the singleton instance of [SimpleTracer]
+  static SimpleTracer get instance {
+    if (_instance == null) {
+      throw Exception(
+          'SimpleTracer is not configured. Call configureHoneycomb first.');
+    }
+    return _instance!;
+  }
+
+  ///
+  /// Functions
+  ///
+
+  /// Send trace data to the server
+  static Future<void> sendTrace(Trace trace) async {
+    if (_instance == null) {
+      throw Exception(
+          'SimpleTracer is not configured. Call configureHoneycomb first.');
+    }
+    await _instance!._sendTraceData(trace);
+  }
+
+  ///
+  /// Private Methods
+  ///
 
   /// Sends trace data to the server.
-  Future<void> sendTraceData(Trace trace) async {
+  Future<void> _sendTraceData(Trace trace) async {
     final data = trace.encodedData;
     try {
       final response = await _dio.post<dynamic>(
