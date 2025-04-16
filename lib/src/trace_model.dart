@@ -78,7 +78,7 @@ class Trace {
 
   /// The attributes of the trace.
   /// This is an optional parameter.
-  final Map<String, String>? attributes;
+  final Map<String, dynamic>? attributes;
 
   ///
   /// Functions
@@ -115,12 +115,8 @@ class Trace {
                 kind: _spanKind,
                 name: spanName,
                 startTimeUnixNano: _startTime.toInt64(),
-                attributes: attributes?.entries
-                    .map((e) => KeyValue(
-                          key: e.key,
-                          value: AnyValue(stringValue: e.value),
-                        ))
-                    .toList(),
+                attributes:
+                    attributes?.entries.map((e) => e.toKeyValue()).toList(),
               ),
             ],
           ),
@@ -136,22 +132,10 @@ class Trace {
   }
 
   /// Adds an attribute to the trace.
-  void addAttribute(String key, String value) {
+  void addAttribute(String key, dynamic value) {
+    final entry = MapEntry<String, dynamic>(key, value);
     _tracesData.resourceSpans[0].scopeSpans[0].spans[0].attributes.add(
-      KeyValue(
-        key: key,
-        value: AnyValue(stringValue: value),
-      ),
-    );
-  }
-
-  /// Adds a link to the trace.
-  void addLink(String traceId, String spanId) {
-    _tracesData.resourceSpans[0].scopeSpans[0].spans[0].links.add(
-      Span_Link(
-        traceId: traceId.toListInt(),
-        spanId: spanId.toListInt(),
-      ),
+      entry.toKeyValue(),
     );
   }
 
@@ -195,5 +179,41 @@ extension StringToListInt on String {
   /// Converts [String] to [List<int>].
   List<int> toListInt() {
     return codeUnits;
+  }
+}
+
+/// Converts [MapEntry] to [KeyValue] based on
+/// type of the provided value.
+/// It will fall back to String if the type is not supported.
+extension MapEntryX on MapEntry<String, dynamic> {
+  /// Converts [MapEntry] to [KeyValue].
+  KeyValue toKeyValue() {
+    final type = value.runtimeType;
+    if (type == String) {
+      return KeyValue(
+        key: key,
+        value: AnyValue(stringValue: value as String),
+      );
+    } else if (type == int) {
+      return KeyValue(
+        key: key,
+        value: AnyValue(intValue: Int64(value as int)),
+      );
+    } else if (type == double) {
+      return KeyValue(
+        key: key,
+        value: AnyValue(doubleValue: value as double),
+      );
+    } else if (type == bool) {
+      return KeyValue(
+        key: key,
+        value: AnyValue(boolValue: value as bool),
+      );
+    } else {
+      return KeyValue(
+        key: key,
+        value: AnyValue(stringValue: value.toString()),
+      );
+    }
   }
 }
