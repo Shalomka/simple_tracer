@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:simple_tracer/src/trace_model.dart';
+import 'package:simple_tracer/src/model/trace_model.dart';
 
 /// {@template simple_tracer}
 /// A Very Good Project created by Very Good CLI.

@@ -3,10 +3,10 @@ import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart';
 import 'package:simple_tracer/src/generated/otel/opentelemetry/proto/common/v1/common.pb.dart';
 import 'package:simple_tracer/src/generated/otel/opentelemetry/proto/resource/v1/resource.pb.dart';
-import 'package:simple_tracer/src/span_kind_enum.dart';
+import 'package:simple_tracer/src/model/span_kind_enum.dart';
 import 'package:uuid/uuid.dart';
 
-import '../src/generated/otel/opentelemetry/proto/trace/v1/trace.pb.dart';
+import '../generated/otel/opentelemetry/proto/trace/v1/trace.pb.dart';
 
 const _uuid = Uuid();
 
