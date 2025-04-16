@@ -5,7 +5,12 @@ import 'package:test/test.dart';
 void main() {
   group('SimpleTracer', () {
     test('can be instantiated', () {
-      expect(SimpleTracer(), isNotNull);
+      expect(
+          SimpleTracer.honeycomb(
+            serviceName: 'test_service',
+            apiKey: 'test_api_key',
+          ),
+          isA<SimpleTracer>());
     });
   });
 }
