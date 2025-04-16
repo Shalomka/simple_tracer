@@ -6,12 +6,12 @@ import 'package:simple_tracer/src/model/trace_model.dart';
 /// {@endtemplate}
 class SimpleTracer {
   final Dio _dio;
-  final String _endpoint;
-  final String _apiKey;
 
   static SimpleTracer? _instance;
 
-  SimpleTracer._internal(this._dio, this._endpoint, this._apiKey);
+  SimpleTracer._internal(this._dio, {BaseOptions? options}) {
+    _dio.options = options ?? BaseOptions();
+  }
 
   ///
   /// Constructors
@@ -23,8 +23,13 @@ class SimpleTracer {
   }) {
     return _instance ??= SimpleTracer._internal(
       Dio(),
-      'https://api.honeycomb.io',
-      apiKey,
+      options: BaseOptions(
+        baseUrl: 'https://api.honeycomb.io',
+        headers: {
+          'X-Honeycomb-Team': apiKey,
+          'Content-Type': 'application/x-protobuf',
+        },
+      ),
     );
   }
 
@@ -63,15 +68,8 @@ class SimpleTracer {
     final data = trace.encodedData;
     try {
       final response = await _dio.post<dynamic>(
-        '$_endpoint/v1/trace',
+        '/v1/traces',
         data: data,
-        options: Options(
-          headers: {
-            'X-Honeycomb-Team': _apiKey,
-            'Content-Type': 'application/x-protobuf',
-            'User-Agent': 'simple_tracer/1.0',
-          },
-        ),
       );
       if (response.statusCode != 200) {
         throw Exception('Failed to send trace data: ${response.statusCode}');
