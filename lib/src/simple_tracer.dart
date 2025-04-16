@@ -6,12 +6,10 @@ import 'package:simple_tracer/src/trace_model.dart';
 /// {@endtemplate}
 class SimpleTracer {
   final Dio _dio;
-  final String _serviceName;
   final String _endpoint;
   final String _apiKey;
   const SimpleTracer._(
     this._dio,
-    this._serviceName,
     this._endpoint,
     this._apiKey,
   );
@@ -19,11 +17,9 @@ class SimpleTracer {
   /// Creates a new instance of [SimpleTracer] for
   /// honeycomb.io
   SimpleTracer.honeycomb({
-    required String serviceName,
     required String apiKey,
   }) : this._(
           Dio(),
-          serviceName,
           'https://api.honeycomb.io',
           apiKey,
         );
