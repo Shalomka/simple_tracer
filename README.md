@@ -4,7 +4,7 @@
 [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
 [![License: MIT][license_badge]][license_link]
 
-A Very Good Project created by Very Good CLI.
+Simple implementation of opentelemetry tracing for flutter and dart projects.
 
 ## Installation 💻
 
@@ -14,6 +14,20 @@ Install via `dart pub add`:
 
 ```sh
 dart pub add simple_tracer
+```
+
+---
+
+## Re-Compiling Otel Proto Files
+
+**❗ This is only needed if or when the otel project updates the standard.**
+
+It takes all protos from opentelemetry folder and generates corresponding dart classes to /lib/src/generated.
+
+Run this from the core folder of the project:
+
+```sh
+./compile_otel.sh
 ```
 
 ---
