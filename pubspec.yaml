@@ -1,7 +1,7 @@
 name: simple_tracer
 description: Simple implementation of opentelemetry tracing for flutter and dart projects.
 
-version: 0.1.0+1
+version: 0.1.2+2
 publish_to: none
 
 environment:
