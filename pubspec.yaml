@@ -1,5 +1,6 @@
 name: simple_tracer
-description: A Very Good Project created by Very Good CLI.
+description: Simple implementation of opentelemetry tracing for flutter and dart projects.
+
 version: 0.1.0+1
 publish_to: none
 
@@ -11,7 +12,9 @@ dev_dependencies:
   test: ^1.25.8
   very_good_analysis: ^6.0.0
 dependencies:
+  dio:
   fixnum: ^1.1.1
   grpc: ^4.0.4
   protobuf: ^4.0.0
+  uuid: ^4.5.1
 
