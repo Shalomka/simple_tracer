@@ -24,10 +24,16 @@ class Trace {
     required this.spanName,
     this.attributes,
     SpanKind spanKind = SpanKind.client,
+
+    /// Optional trace ID, that is a 32-character hexadecimal string.
+    /// If not provided, a new trace ID is generated using [Uuid.v4].
     String? traceId,
+
+    /// Optional span ID, that is a 16-character hexadecimal string.
+    /// If not provided, a new span ID is generated using [Uuid.v4].
     String? spanId,
-  })  : _traceId = traceId ?? _uuid.v4(),
-        _spanId = spanId ?? _uuid.v4(),
+  })  : _traceId = traceId ?? _uuid.v4().removeHyphen(),
+        _spanId = spanId ?? _uuid.v4().removeHyphen(),
         _spanKind = spanKind.toProto() {
     _init();
   }
@@ -46,6 +52,16 @@ class Trace {
 
   /// Opentelemetry data encoded in [Uint8List] format.
   Uint8List get encodedData => _tracesData.writeToBuffer();
+
+  /// Returns HTTP TraceParent Header for Http requests.
+  /// The traceparent header uses the version-trace_id-parent_id-trace_flags format where:
+  /// - version is always 00.
+  /// - trace_id is a hex-encoded trace id.
+  /// - span_id is a hex-encoded span id.
+  /// - trace_flags is a hex-encoded 8-bit field that contains tracing flags such as sampling, trace level, etc.
+  String get httpTraceParent {
+    return '00-$_traceId-$_spanId-01';
+  }
 
   ///
   /// Private variables
@@ -160,11 +176,6 @@ class Trace {
       );
     }
   }
-
-  /// Returns HTTP TraceParent Header for Http requests.
-  String get httpTraceParent {
-    return '00-$_traceId-$_spanId-01';
-  }
 }
 
 ///
@@ -179,11 +190,25 @@ extension DateTimeToInt64 on DateTime {
   }
 }
 
-/// Converts [String] to [List<int>]
-extension StringToListInt on String {
-  /// Converts [String] to [List<int>].
+/// Converts [String] to [List<int>] ensuring it represents a 16-byte trace ID.
+extension StringX on String {
+  /// Converts a 32-character hexadecimal [String] to a 16-byte [List<int>].
+  /// Throws an [ArgumentError] if the string is not valid.
   List<int> toListInt() {
-    return codeUnits;
+    if (length != 32) {
+      throw ArgumentError(
+          'Trace ID must be a 32-character hexadecimal string.');
+    }
+    final bytes = <int>[];
+    for (var i = 0; i < length; i += 2) {
+      bytes.add(int.parse(substring(i, i + 2), radix: 16));
+    }
+    return bytes;
+  }
+
+  /// removes hypens from the string
+  String removeHyphen() {
+    return replaceAll('-', '');
   }
 }
 
