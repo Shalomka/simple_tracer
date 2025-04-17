@@ -160,6 +160,11 @@ class Trace {
       );
     }
   }
+
+  /// Returns HTTP TraceParent Header for Http requests.
+  String get httpTraceParent {
+    return '00-$_traceId-$_spanId-01';
+  }
 }
 
 ///
