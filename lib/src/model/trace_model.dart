@@ -47,6 +47,9 @@ class Trace {
   /// Getters
   ///
 
+  /// Returns the trace ID of the trace.
+  String get traceId => _traceId;
+
   /// OpenTelemetry trace data in [TracesData] format.
   TracesData get data => _tracesData;
 
@@ -103,6 +106,11 @@ class Trace {
   /// toSting method to convert trace data to string.
   @override
   String toString() => data.toString();
+
+  /// dispose method to dispose the trace data.
+  void dispose() {
+    _tracesData.clear();
+  }
 
   /// initialize [_tracesData]
   void _initTracesData() {
